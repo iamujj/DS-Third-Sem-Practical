@@ -1,0 +1,192 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int main()
+{
+    char ch;
+
+    printf("Enter c to create an array\n");
+    printf("Enter t to traverse through an array\n");
+    printf("Enter d to delete an element at position p from the array given\n");
+    printf("Enter s to search an element in an array\n");
+    printf("Enter o to sort a given array\n");
+    printf("Enter m to merge two arrays\n");
+
+    scanf("%c", &ch);
+
+    switch (ch)
+    {
+    case 'c' :
+    {
+        printf("Enter the size of the array\n");
+        int n;
+        scanf("%d", &n);
+        printf("Enter the elements one by one or in a single go, seperated by space\n");
+        int* a = (int*)malloc(n * sizeof(int));
+
+        for (int i = 0; i < n; i++)
+            scanf("%d", &a[i]);
+
+        printf("Here is your array\n");
+
+        for (int i = 0; i < n; i++)
+            printf("%d ", a[i]);
+
+        printf("\n");
+        break;
+    }
+    case 't' :
+    {
+        printf("Enter the size of the array\n");
+        int n;
+        scanf("%d", &n);
+        printf("Enter the elements one by one or in a single go, seperated by space\n");
+        int* a = (int*)malloc(n * sizeof(int));
+
+        for (int i = 0; i < n; i++)
+            scanf("%d", &a[i]);
+
+        printf("Let's Traverse through each element and print the twice of each elements\n");
+
+        for (int i = 0; i < n; i++)
+        {
+            a[i] = 2 * a[i];
+            printf("%d\n", a[i]);
+        }
+
+        break;
+    }
+    case 'd' :
+    {
+        printf("Enter the size of the array\n");
+        int n;
+        scanf("%d", &n);
+        printf("Enter the elements one by one or in a single go, seperated by space\n");
+        int* a = (int*)malloc(n * sizeof(int));
+
+        for (int i = 0; i < n; i++)
+            scanf("%d", &a[i]);
+
+        int p;
+        printf("Enter the number/position of element to be deleted\n");
+        scanf("%d", &p);
+
+        int p1 = p - 1;
+
+        for (int i = p1; i < n - 1; i++)
+            a[p1] = a[p1 + 1];
+        printf("Here's your updated array\n");
+
+        for (int i = 0; i < n - 1; i++)
+            printf("%d ", a[i]);
+
+        printf("\n");
+        break;
+    }
+    case 's' :
+    {
+        printf("Enter the size of the array\n");
+        int n;
+        scanf("%d", &n);
+        printf("Enter the elements one by one or in a single go, seperated by space\n");
+        int* a = (int*)malloc(n * sizeof(int));
+
+        for (int i = 0; i < n; i++)
+            scanf("%d", &a[i]);
+
+        int e;
+        printf("Enter the element to be searched in array\n");
+        scanf("%d", &e);
+        int i;
+        for (i = 0; i < n; i++)
+        {
+            if (a[i] == e)
+            {
+                printf("The element %d is present at the index %d\n", e, i);
+                break;
+            }
+        }
+        if (i == n)
+            printf("The element %d is not present is this array\n", e);
+
+        break;
+    }
+    case 'o' :
+    {
+        printf("Enter the size of the array\n");
+        int n;
+        scanf("%d", &n);
+        printf("Enter the elements one by one or in a single go, seperated by space\n");
+        int* a = (int*)malloc(n * sizeof(int));
+
+        for (int i = 0; i < n; i++)
+            scanf("%d", &a[i]);
+
+        printf("Here's th sorted array\n");
+
+        for (int i = 1; i < n; i++)
+        {
+            int key = a[i];
+            int j = i - 1;
+            while (j >= 0 && a[j] > key)
+            {
+                a[j + 1] = a[j];
+                j--;
+            }
+            a[j + 1] = key;
+        }
+
+        for (int i = 0; i < n; i++)
+            printf("%d ", a[i]);
+
+        printf("\n");
+        break;
+    }
+    case 'm' :
+    {
+        printf("Enter the size of the array a\n");
+        int na;
+        scanf("%d", &na);
+        printf("Enter the elements one by one or in a single go, seperated by space\n");
+        int* a = (int*)malloc(na * sizeof(int));
+
+        for (int i = 0; i < na; i++)
+            scanf("%d", &a[i]);
+
+        printf("Enter the size of the array b\n");
+        int nb;
+        scanf("%d", &nb);
+        printf("Enter the elements one by one or in a single go, seperated by space\n");
+        int* b = (int*)malloc(nb * sizeof(int));
+
+        for (int i = 0; i < nb; i++)
+            scanf("%d", &b[i]);
+
+        int nc = na + nb;
+
+        int* c = (int*)malloc(nc * sizeof(int));
+
+        for (int i = 0; i < na; i++)
+            c[i] = a[i];
+
+        for (int i = na, j = 0; i < nc; i++)
+        {
+            c[i] = b[j];
+            j++;
+        }
+
+        printf("Here's your merged array\n");
+
+        for (int i = 0; i < nc; i++)
+            printf("%d ", c[i]);
+
+        break;
+    }
+    default :
+    {
+        printf("Wrong input! Please try again with the correct input as given above\n");
+    }
+    }
+
+    return 0;
+}
