@@ -1,12 +1,68 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+void bubsrt(int* a, int n)
+{
+    if (n == 1)
+        return;
+
+    //bubbling largest element to the last
+    for (int i = 0; i < n - 1; i++)
+        if (a[i] > a[i + 1])
+        {
+            int t = a[i];
+            a[i] = a[i + 1];
+            a[i + 1] = t;
+        }
+
+    bubsrt(a, n - 1);
+}
+
+void selsrt(int* a, int i, int n)
+{
+    if (i == n)
+        return;
+
+    int ind = i;
+    for (int j = i + 1; j < n; j++)
+        if (a[j] < a[ind])
+        {
+            ind = j;
+        }
+    int t = a[i];
+    a[i] = a[ind];
+    a[ind] = t;
+    selsrt(a, i + 1, n);
+}
+
+void inssrt(int arr[], int n)
+{
+    if (n <= 1)
+        return;
+
+    // Sort first n-1 elements
+    inssrt( arr, n-1 );
+
+    // Insert last element at its correct position in sorted array.
+    int last = arr[n-1];
+    int j = n-2;
+
+    while (j >= 0 && arr[j] > last)
+    {
+        arr[j + 1] = arr[j];
+        j--;
+    }
+    arr[j + 1] = last;
+}
+
 int main()
 {
     printf("Enter b for Bubble Sort\n");
     printf("Enter s for Selection Sort\n");
     printf("Enter i for Insertion Sort\n");
-
+    printf("Enter a for Bubble Sort using recursion\n");
+    printf("Enter f for Selection Sort using recursion\n");
+    printf("Enter j for Insertion Sort using recursion\n");
 
     char ch;
     scanf_s("%c", &ch);
@@ -112,6 +168,70 @@ int main()
             printf("%d ", a[i]);
 
         break;
+    }
+    case 'a' :
+    {
+        printf("Enter the size of your array\n");
+        int n;
+        scanf_s("%d", &n);
+        int* a = (int*)malloc(n * sizeof(int));
+
+        printf("Enter the elements of the array seperated by the space\n");
+        for (int i = 0; i < n; i++)
+            scanf_s("%d", &a[i]);
+
+        bubsrt(a, n);
+
+        printf("Here's your sorted array\n");
+
+        for (int i = 0; i < n; i++)
+            printf("%d ", a[i]);
+
+        break;
+    }
+    case 'f' :
+    {
+        printf("Enter the size of your array\n");
+        int n;
+        scanf_s("%d", &n);
+        int* a = (int*)malloc(n * sizeof(int));
+
+        printf("Enter the elements of the array seperated by the space\n");
+        for (int i = 0; i < n; i++)
+            scanf_s("%d", &a[i]);
+
+        selsrt(a, 0, n);
+
+        printf("Here's your sorted array\n");
+
+        for (int i = 0; i < n; i++)
+            printf("%d ", a[i]);
+
+        break;
+    }
+    case 'j' :
+    {
+        printf("Enter the size of your array\n");
+        int n;
+        scanf_s("%d", &n);
+        int* a = (int*)malloc(n * sizeof(int));
+
+        printf("Enter the elements of the array seperated by the space\n");
+        for (int i = 0; i < n; i++)
+            scanf_s("%d", &a[i]);
+
+        inssrt(a, n);
+
+        printf("Here's your sorted array\n");
+
+        for (int i = 0; i < n; i++)
+            printf("%d ", a[i]);
+
+        break;
+    }
+    default :
+    {
+        printf("Wrong Input! Please Try again\n");
     }
     }
 
