@@ -1,0 +1,77 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+struct stck
+{
+    int* a;
+    unsigned int cap;
+    int top;
+};
+
+struct stck* createstack(unsigned int c)
+{
+    struct stck* mstack = (struct stck*)malloc(sizeof(struct stck));
+    mstack->cap = c;
+    mstack->top = -1;
+    mstack->a = (int*)malloc((mstack->cap) * sizeof(int));
+    return mstack;
+}
+void push(struct stck* mstack, int x)
+{
+    if ((mstack->top) == ((mstack->cap) - 1))
+    {
+        printf("Stack is full! Pop out an item to push a new item\n");
+        return;
+    }
+    mstack->top++;
+    mstack->a[mstack->top] = x;
+}
+int pop(struct stck* mstack)
+{
+    if ((mstack->top) == -1)
+    {
+        printf("Stack is Empty! Push something in it\n");
+        return INT_MIN;
+    }
+    int res = mstack->a[mstack->top];
+    mstack->top--;
+    return res;
+}
+int peek(struct stck* mstack)
+{
+    if ((mstack->top) == -1)
+    {
+        printf("Stack is Empty! Push something in it\n");
+        return INT_MIN;
+    }
+    return (mstack->a[mstack->top]);
+}
+int size(struct stck* mstack)
+{
+    return (mstack->top + 1);
+}
+bool isempty(struct stck* mstack)
+{
+    return (mstack->top == -1);
+}
+
+int main()
+{
+    unsigned int n;
+    printf("Enter the capacity of the stack\n");
+    scanf_s("%i", &n);
+    struct stck* mstack = createstack(n);
+    push(mstack, 5);
+    push(mstack, 4);
+    push(mstack, 3);
+    push(mstack, 2);
+    push(mstack, 1);
+    printf("%d popped\n", pop(mstack));
+    push(mstack, 0);
+    printf("%d peek\n", peek(mstack));
+    printf("%d size\n", size(mstack));
+    printf("%d isempty\n", isempty(mstack));
+
+    return 0;
+}
