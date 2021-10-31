@@ -1,3 +1,3 @@
 # DS-Third-Sem-Practical
-Repo for the programs created during Data Structure Lab.
+Repo for the programs created for Data Structure Lab.
 Might add more details later...
