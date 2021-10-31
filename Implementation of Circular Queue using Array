@@ -1,0 +1,138 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#include<limits.h>
+
+struct queue
+{
+	int cap;
+	int size;
+	int front;
+	int* arr;
+};
+
+struct queue* cqu(int c)
+{
+	struct queue* mq = (struct queue*)malloc(sizeof(struct queue));
+	mq->cap = c;
+	mq->size = 0;
+	mq->front = -1;
+	mq->arr = (int*)malloc((mq->cap) * sizeof(int));
+	return mq;
+}
+bool isfull(struct queue* mq)
+{
+	return (mq->size == mq->cap);
+}
+bool isempty(struct queue* mq)
+{
+	return (mq->size == 0);
+}
+void enqueue(struct queue* mq, int x)
+{
+	if (isfull(mq))
+	{
+		printf("Queue is full\n");
+		return;
+	}
+	if ((mq->front) == -1)
+	{
+		mq->front = 0;
+		mq->size = 1;
+		int rear = ((mq->front) + (mq->size) - 1) % (mq->cap);
+		mq->arr[mq->front] = x;
+		printf("Enqueued : %d\n", x);
+		return;
+	}
+	mq->size = mq->size + 1;
+	int rear = ((mq->front) + (mq->size) - 1) % mq->cap;
+	mq->arr[rear] = x;
+	printf("Enqueued : %d\n", x);
+	return;
+}
+int dequeue(struct queue* mq)
+{
+	if (isempty(mq))
+	{
+		printf("Queue is empty\n");
+		return INT_MIN;
+	}
+	int rear = ((mq->front) + (mq->size) - 1) % mq->cap;
+	if ((mq->front) == rear)
+	{
+		int t = mq->arr[mq->front];
+		mq->size = 0;
+		mq->front = -1;
+		printf("Dequeued : %d\n", t);
+		return t;
+	}
+	int t = mq->arr[mq->front];
+	mq->size = mq->size - 1;
+	mq->front = (mq->front + 1) % mq->cap;
+	printf("Dequeued : %d\n", t);
+	return t;
+}
+int sizeq(struct queue* mq)
+{
+	return mq->size;
+}
+void front(struct queue* mq)
+{
+	printf("Front is at index %d\n", mq->front);
+	return;
+}
+void rear(struct queue* mq)
+{
+	int rear = ((mq->front) + (mq->size) - 1) % (mq->cap);
+	printf("Rear is at index %d\n", rear);
+	return;
+}
+void display(struct queue* mq)
+{
+	printf("We have considered left side as front and the right side as rear\n");
+	int ind = mq->front;
+	for (int i = 0; i < (mq->size); i++)
+	{
+		printf("%d  ", mq->arr[ind]);
+		ind = (ind + 1) % (mq->cap);
+	}
+	printf("\n");
+	return;
+}
+
+int main()
+{
+	int c;
+	printf("Enter the capacity of queue\n");
+	scanf("%d", &c);
+	struct queue* mq = cqu(c);
+	printf("Full ? : %d\n", isfull(mq));
+	printf("Empty? : %d\n", isempty(mq));
+	enqueue(mq, 5);
+	enqueue(mq, 6);
+	printf("Full? : %d\n", isfull(mq));
+	printf("Empty? : %d\n", isempty(mq));
+	enqueue(mq, 7);
+	enqueue(mq, 2);
+	enqueue(mq, 3);
+	printf("Size : %d\n", sizeq(mq));
+	front(mq);
+	rear(mq);
+	display(mq);
+	dequeue(mq);
+	dequeue(mq);
+	enqueue(mq, 1);
+	printf("Size : %d\n", sizeq(mq));
+	front(mq);
+	rear(mq);
+	display(mq);
+	enqueue(mq, 8);
+	enqueue(mq, 9);
+	printf("Full? : %d\n", isfull(mq));
+	printf("Empty? : %d\n", isempty(mq));
+	display(mq);
+	front(mq);
+	rear(mq);
+
+	return 0;
+}
