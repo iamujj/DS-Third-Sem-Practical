@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+//Structure for general pointers like front and rear
+struct qnode
+{
+    int val;
+    struct qnode* next;
+};
+//structure of queue which contains qnode type pointer variables, front and rear (packed)
+struct Queue
+{
+    struct qnode* front, * rear;
+    int size;
+};
+//function to initiate assign values to the qnode type pointer variables, i.e. front, rear
+struct qnode* newNode(int k)
+{
+    struct qnode* temp = (struct qnode*)malloc(sizeof(struct qnode));
+    temp->val = k;
+    temp->next = NULL;
+    return temp;
+}
+//function to create an empty queue
+struct Queue* cq()
+{
+    struct Queue* q = (struct Queue*)malloc(sizeof(struct Queue));
+    q->front = q->rear = NULL;
+    q->size = 0;
+    return q;
+}
+
+int isempty(struct Queue* q)
+{
+    if (q->front == NULL)
+        return 1;
+    else
+        return 0;
+}
+
+void enQueue(struct Queue* q, int k)
+{
+    struct qnode* temp = newNode(k);
+
+    if (q->front == NULL && q->rear != NULL)
+    {
+        printf("Exception Occured, can't add any element in the queue now\n");
+        return;
+    }
+    if (q->rear == NULL)
+    {
+        q->front = q->rear = temp;
+        q->size = 1;
+        printf("Enqueued %d\n", k);
+        return;
+    }
+
+    q->rear->next = temp;
+    q->rear = temp;
+    q->size++;
+    printf("Enqueued %d\n", k);
+    return;
+}
+
+void deQueue(struct Queue* q)
+{
+    if (q->front == NULL)
+    {
+        printf("Queue is empty\n");
+        return;
+    }
+
+    struct qnode* temp = q->front;
+    printf("Dequeued %d\n", q->front->val);
+    q->size--;
+    q->front = q->front->next;
+    free(temp);
+    return;
+}
+
+int getfront(struct Queue* q)
+{
+    if (q->front == NULL)
+    {
+        printf("Queue empty\n");
+        return INT_MAX;
+    }
+    return q->front->val;
+}
+
+int getrear(struct Queue* q)
+{
+    if (q->rear == NULL)
+    {
+        printf("Queue empty\n");
+        return INT_MAX;
+    }
+    if (q->front == NULL && q->rear != NULL)
+    {
+        printf("Queue empty, exception\n");
+        return INT_MAX;
+    }
+    return q->rear->val;
+}
+
+int size(struct Queue* q)
+{
+    return q->size;
+}
+
+void display(struct Queue* q)
+{
+    if ((q->front == NULL && q->rear != NULL) || q->front == NULL)
+    {
+        printf("Queue empty\n");
+        return;
+    }
+    struct qnode* curr = q->front;
+    while (curr != NULL)
+    {
+        printf("%d ", curr->val);
+        curr = curr->next;
+    }
+    printf("\n");
+    return;
+}
+
+int main()
+{
+    struct Queue* q = cq();
+    printf("Empty? : %d\n", isempty(q));
+    enQueue(q, 10);
+    enQueue(q, 20);
+    printf("Empty? : %d\n", isempty(q));
+    printf("Size : %d\n", size(q));
+    display(q);
+    deQueue(q);
+    enQueue(q, 30);
+    enQueue(q, 40);
+    enQueue(q, 50);
+    enQueue(q, 60);
+    enQueue(q, 70);
+    enQueue(q, 80);
+    enQueue(q, 90);
+    printf("Size : %d\n", size(q));
+    display(q);
+    deQueue(q);
+    printf("Queue Front : %d \n", getfront(q));
+    printf("Queue Rear : %d", getrear(q));
+    return 0;
+}
