@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
+#define scanf scanf_s
 
 struct stck
 {
@@ -26,6 +27,8 @@ void push(struct stck* mstack, int x)
     }
     mstack->top++;
     mstack->a[mstack->top] = x;
+    printf("Pushed %d\n", x);
+    return;
 }
 int pop(struct stck* mstack)
 {
@@ -55,23 +58,44 @@ bool isempty(struct stck* mstack)
 {
     return (mstack->top == -1);
 }
+bool isfull(struct stck* mstack)
+{
+    return (mstack->top == (mstack->cap - 1));
+}
+void display(struct stck* mstack)
+{
+    if (mstack->top == -1)
+    {
+        printf("Stack is Empty.\n");
+        return;
+    }
+    printf("Elements of Stack from top to bottom are : %d ", mstack->a[mstack->top]);
+    int t = mstack->top;
+    while (t--)
+    {
+        printf("%d ", mstack->a[t]);
+    }
+    printf("\n");
+    return;
+}
 
 int main()
 {
-    unsigned int n;
-    printf("Enter the capacity of the stack\n");
-    scanf_s("%i", &n);
-    struct stck* mstack = createstack(n);
+    struct stck* mstack = createstack(5);
     push(mstack, 5);
     push(mstack, 4);
     push(mstack, 3);
+    display(mstack);
     push(mstack, 2);
     push(mstack, 1);
+    printf("Is Full? : %d\n", isfull(mstack));
     printf("%d popped\n", pop(mstack));
+    printf("Is Full? : %d\n", isfull(mstack));
     push(mstack, 0);
+    display(mstack);
     printf("%d peek\n", peek(mstack));
     printf("%d size\n", size(mstack));
-    printf("%d isempty\n", isempty(mstack));
+    printf("Is Empty? : %d\n", isempty(mstack));
 
     return 0;
 }
