@@ -102,10 +102,7 @@ void display(struct queue* mq)
 
 int main()
 {
-	int c;
-	printf("Enter the capacity of queue\n");
-	scanf("%d", &c);
-	struct queue* mq = cqu(c);
+	struct queue* mq = cqu(6);
 	printf("Full ? : %d\n", isfull(mq));
 	printf("Empty? : %d\n", isempty(mq));
 	enqueue(mq, 5);
