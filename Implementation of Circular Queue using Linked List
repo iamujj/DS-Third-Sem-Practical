@@ -1,0 +1,157 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+struct Node
+{
+	int data;
+	struct Node* link;
+};
+
+struct Node* tail;
+
+struct Node* enQueue(int val)
+{
+	struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+	if (tail == NULL)
+	{
+		temp->data = val;
+		temp->link = temp;
+		tail = temp;
+		printf("Enqueued %d\n", val);
+		return tail;
+	}
+	else
+	{
+		temp->data = val;
+		temp->link = tail->link;
+		tail->link = temp;
+		tail = temp;
+		printf("Enqueued %d\n", val);
+		return tail;
+	}
+}
+
+int deQueue()
+{
+	if (tail == NULL)
+	{
+		printf("Queue is empty\n");
+		return INT_MIN;
+	}
+
+	struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+	temp = tail->link;
+
+	// If this is the last node to be deleted
+	int value;
+	if (temp->link == temp)
+	{
+		value = temp->data;
+		free(tail);
+		tail = NULL;
+		return value;
+	}
+	value = temp->data;
+	tail->link = temp->link;
+	free(temp);
+	return value;
+}
+
+void displayQueue()
+{
+	if (tail == NULL)
+	{
+		printf("Queue is empty\n");
+		return;
+	}
+	struct Node* hd = (struct Node*)malloc(sizeof(struct Node));
+	hd = tail->link;
+	printf("Elements in the queue : ");
+	printf("%d ", hd->data);
+	while (hd->link != tail->link)
+	{
+		printf("%d ", (hd->link)->data);
+		hd = hd->link;
+	}
+	printf("\n");
+	return;
+}
+
+void size()
+{
+	struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+	temp = tail->link;
+	int cnt = 1;
+	while (temp->link != tail->link)
+	{
+		cnt++;
+		temp = temp->link;
+	}
+	printf("Size of Queue is : %d\n", cnt);
+	return;
+}
+
+void getfront()
+{
+	if (tail == NULL)
+	{
+		printf("Queue is Empty\n");
+		return;
+	}
+	if (tail->link == tail)
+	{
+		printf("Front is : %d\n", tail->data);
+		return;
+	}
+	printf("Front is : %d\n", tail->link->data);
+	return;
+}
+
+void getrear()
+{
+	if (tail == NULL)
+	{
+		printf("Queue is Empty\n");
+		return;
+	}
+	printf("Rear is : %d\n", tail->data);
+	return;
+}
+
+int isempty()
+{
+	return (tail == NULL); 
+}
+
+int main()
+{
+	printf("Is Empty? : %d\n", isempty());
+
+	tail = enQueue(14);
+	tail = enQueue(22);
+	tail = enQueue(6);
+
+	displayQueue();
+	getfront();
+	getrear();
+
+	printf("Dequeued %d\n", deQueue());
+	printf("Dequeued %d\n", deQueue());
+
+	size();
+	printf("Is Empty? : %d\n", isempty());
+
+	displayQueue();
+
+	tail = enQueue(9);
+	tail = enQueue(20);
+
+	getfront();
+	getrear();
+	size();
+
+	displayQueue();
+
+	return 0;
+}
