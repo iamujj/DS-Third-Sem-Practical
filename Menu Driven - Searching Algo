@@ -1,178 +1,114 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-void indexedSequentialSearch(int arr[], int n, int k)
-{
-    int tsz = (((n - 1) / 3) + 1);
-    int* te = (int*)malloc(tsz * sizeof(int));
-    int* indc = (int*)malloc(tsz * sizeof(int));
-    int temp, i, set = 0;
-    int j = 0, ind = 0, start, end;
-    for (i = 0; i < n; i += 3)
-    {
-        te[ind] = arr[i];
-        indc[ind] = i;
-        ind++;
-    }
-    if (k < te[0])
-    {
-        printf("Not found\n");
-        return;
-    }
-    else
-    {
-        for (i = 1; i < ind; i++)
-            if (k <= te[i])
-            {
-                start = indc[i - 1];
-                end = indc[i];
-                set = 1;
-                break;
-            }
-    }
-    if (set == 0)
-    {
-        start = indc[i - 1];
-        end = n;
-    }
-    for (i = start; i < end; i++)
-    {
-        if (k == arr[i])
-        {
-            j = 1;
-            break;
-        }
-    }
-    if (j == 1)
-        printf("Found at index %d\n", i);
-    else
-        printf("Not found\n");
-}
-
 int main()
 {
-    printf("Enter l for Linear Search in the array\n");
-    printf("Enter b for Binary Search in the array\n");
-    printf("Enter i for Indexed Sequential Search in the array\n");
-    printf("Enter x to exit the program\n");
-    while (1)
-    {
-        char ch;
-        scanf("%c", &ch, 1);
+	printf("Enter l for Linear Search in the array\n");
+	printf("Enter b for Binary Search in the array\n");
+	printf("Enter x to exit the program\n");
+	while (1)
+	{
+		char ch;
+		scanf("%c", &ch, 1);
 
-        switch (ch)
-        {
-        case 'l':
-        {
-            printf("Enter the number of elements in the array\n");
-            int n;
-            scanf("%d", &n);
-            int* a = (int*)malloc(n * sizeof(int));
-            printf("Enter the elements of the array seperated by space\n");
-            for (int i = 0; i < n; i++)
-            {
-                scanf("%d", &a[i]);
-            }
-            printf("Enter the element to be searched in the array\n");
-            int x;
-            scanf("%d", &x);
+		switch (ch)
+		{
+		case 'l':
+		{
+			printf("Enter the number of elements in the array\n");
+			int n;
+			scanf("%d", &n);
+			int* a = (int*)malloc(n * sizeof(int));
+			printf("Enter the elements of the array seperated by space\n");
+			for (int i = 0; i < n; i++)
+			{
+				scanf("%d", &a[i]);
+			}
+			printf("Enter the element to be searched in the array\n");
+			int x;
+			scanf("%d", &x);
 
-            //linear search algo
-            int i;
-            for (i = 0; i < n; i++)
-            {
-                if (a[i] == x)
-                {
-                    printf("The Element %d is present at the index %d in the array\n", x, i);
-                    break;
-                }
-            }
-            if (i == n)
-                printf("The Element %d is not present in the array\n", x);
+			//linear search algo
+			int i;
+			for (i = 0; i < n; i++)
+			{
+				if (a[i] == x)
+				{
+					printf("The Element %d is present at the index %d in the array\n", x, i);
+					break;
+				}
+			}
+			if (i == n)
+				printf("The Element %d is not present in the array\n", x);
 
-            break;
-        }
-        case 'b':
-        {
-            printf("Enter the number of elements in the array\n");
-            int n;
-            scanf("%d", &n);
-            int* a = (int*)malloc(n * sizeof(int));
-            printf("Enter the elements of the array seperated by space\n");
-            for (int i = 0; i < n; i++)
-                scanf("%d", &a[i]);
-            printf("Enter the element to be searched in the array\n");
-            int x;
-            scanf("%d", &x);
+			break;
+		}
+		case 'b':
+		{
+			printf("Enter the number of elements in the array\n");
+			int n;
+			scanf("%d", &n);
+			int* a = (int*)malloc(n * sizeof(int));
+			printf("Enter the elements of the array seperated by space\n");
+			for (int i = 0; i < n; i++)
+				scanf("%d", &a[i]);
+			printf("Enter the element to be searched in the array\n");
+			int x;
+			scanf("%d", &x);
 
-            //binary search algo
-            //firstly sort
-            for (int i = 1; i < n; i++)
-            {
-                int key = a[i];
-                int j = i - 1;
-                while (j >= 0 && a[j] > key)
-                {
-                    a[j + 1] = a[j];
-                    j--;
-                }
-                a[j + 1] = key;
-            }
-            printf("Sorted array : ");
-            for (int i = 0; i < n; i++)
-                printf("%d ", a[i]);
-            printf("\n");
+			//binary search algo
+			//firstly sort
+			for (int i = 1; i < n; i++)
+			{
+				int key = a[i];
+				int j = i - 1;
+				while (j >= 0 && a[j] > key)
+				{
+					a[j + 1] = a[j];
+					j--;
+				}
+				a[j + 1] = key;
+			}
+			printf("Sorted array : ");
+			for (int i = 0; i < n; i++)
+				printf("%d ", a[i]);
+			printf("\n");
 
-            //bs
-            int l = 0, h = n - 1, mid, ans = -1;
-            while (l <= h)
-            {
-                mid = l + (h - l) / 2;
-                if (a[mid] == x)
-                {
-                    ans = mid;
-                    break;
-                }
-                else if (a[mid] > x)
-                    h = mid - 1;
-                else
-                    l = mid + 1;
-            }
-            if (ans != -1)
-                printf("The element %d is present at the index %d in the sorted non-decreasing order\n", x, ans);
-            else
-                printf("The element %d is not present in the array\n", x);
+			//bs
+			int l = 0, h = n - 1, mid, ans = -1;
+			while (l <= h)
+			{
+				mid = l + (h - l) / 2;
+				if (a[mid] == x)
+				{
+					ans = mid;
+					break;
+				}
+				else if (a[mid] > x)
+					h = mid - 1;
+				else
+					l = mid + 1;
+			}
+			if (ans != -1)
+				printf("The element %d is present at the index %d in the sorted non-decreasing order array\n", x, ans);
+			else
+				printf("The element %d is not present in the array\n", x);
 
-            break;
-        }
-        case 'i':
-        {
-            int n, k, * arr;
-            printf("Enter the size of array\n");
-            scanf("%d", &n);
-            arr = (int*)malloc(n * sizeof(int));
-            printf("Enter the elements of array, seperated by space, sorted in ascending order\n");
-            for (int i = 0; i < n; i++)
-                scanf("%d", &arr[i]);
-            printf("Enter the element to be searched in the array\n");
-            scanf("%d", &k);
+			break;
+		}
+		case 'x':
+		{
+			printf("Program Ended...\n");
+			return 0;
+		}
+		default:
+		{
+			printf("Wrong Input! Try again\n");
+		}
+		}
+		getchar();
+		printf("\n\n");
+	}
 
-            indexedSequentialSearch(arr, n, k);
-            break;
-        }
-        case 'x':
-        {
-            printf("Program Ended...\n");
-            return 0;
-        }
-        default:
-        {
-            printf("Wrong Input! Try again\n");
-        }
-        }
-        getchar();
-        printf("\n\n");
-    }
-
-    return 0;
+	return 0;
 }
