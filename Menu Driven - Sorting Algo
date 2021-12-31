@@ -1,239 +1,735 @@
 #include<stdio.h>
 #include<stdlib.h>
+#define scanf scanf_s
 
 void bubsrt(int* a, int n)
 {
-    if (n == 1)
-        return;
+	if (n == 1)
+		return;
 
-    //bubbling largest element to the last
-    for (int i = 0; i < n - 1; i++)
-        if (a[i] > a[i + 1])
-        {
-            int t = a[i];
-            a[i] = a[i + 1];
-            a[i + 1] = t;
-        }
+	//bubbling largest element to the last
+	for (int i = 0; i < n - 1; i++)
+		if (a[i] > a[i + 1])
+		{
+			int t = a[i];
+			a[i] = a[i + 1];
+			a[i + 1] = t;
+		}
 
-    bubsrt(a, n - 1);
+	bubsrt(a, n - 1);
 }
 
 void selsrt(int* a, int i, int n)
 {
-    if (i == n)
-        return;
+	if (i == n)
+		return;
 
-    int ind = i;
-    for (int j = i + 1; j < n; j++)
-        if (a[j] < a[ind])
-        {
-            ind = j;
-        }
-    int t = a[i];
-    a[i] = a[ind];
-    a[ind] = t;
-    selsrt(a, i + 1, n);
+	int ind = i;
+	for (int j = i + 1; j < n; j++)
+		if (a[j] < a[ind])
+		{
+			ind = j;
+		}
+	int t = a[i];
+	a[i] = a[ind];
+	a[ind] = t;
+	selsrt(a, i + 1, n);
 }
 
 void inssrt(int arr[], int n)
 {
-    if (n <= 1)
-        return;
+	if (n <= 1)
+		return;
 
-    // Sort first n-1 elements
-    inssrt( arr, n-1 );
+	// Sort first n-1 elements
+	inssrt(arr, n - 1);
 
-    // Insert last element at its correct position in sorted array.
-    int last = arr[n-1];
-    int j = n-2;
+	// Insert last element at its correct position in sorted array.
+	int last = arr[n - 1];
+	int j = n - 2;
 
-    while (j >= 0 && arr[j] > last)
-    {
-        arr[j + 1] = arr[j];
-        j--;
-    }
-    arr[j + 1] = last;
+	while (j >= 0 && arr[j] > last)
+	{
+		arr[j + 1] = arr[j];
+		j--;
+	}
+	arr[j + 1] = last;
+}
+
+// Utility function to find minimum of two integers
+int mini(int x, int y)
+{
+	return ((x < y) ? x : y);
+}
+
+// Function to merge the two haves arr[l..m] and arr[m+1..r] of array arr[]
+void merge(int arr[], int l, int m, int r)
+{
+	int i, j, k;
+	int n1 = m - l + 1;
+	int n2 = r - m;
+
+	int* L = (int*)malloc(n1 * sizeof(int));
+	int* R = (int*)malloc(n2 * sizeof(int));
+
+	// Copy data to temp arrays L[] and R[]
+	for (i = 0; i < n1; i++)
+		L[i] = arr[l + i];
+	for (j = 0; j < n2; j++)
+		R[j] = arr[m + 1 + j];
+
+	// Merge the temp arrays back into arr[l..r]
+	i = 0;
+	j = 0;
+	k = l;
+	while (i < n1 && j < n2)
+	{
+		if (L[i] <= R[j])
+		{
+			arr[k] = L[i];
+			i++;
+		}
+		else
+		{
+			arr[k] = R[j];
+			j++;
+		}
+		k++;
+	}
+
+	// Copy the remaining elements of L[], if there are any
+	while (i < n1)
+	{
+		arr[k] = L[i];
+		i++;
+		k++;
+	}
+
+	// Copy the remaining elements of R[], if there are any
+	while (j < n2)
+	{
+		arr[k] = R[j];
+		j++;
+		k++;
+	}
+}
+
+// Iterative mergesort function to sort arr[0...n-1]
+void imergeSort(int arr[], int n)
+{
+	int curr_size;  // For current size of subarrays to be merged
+					// curr_size varies from 1 to n/2
+	int left_start; // For picking starting index of left subarray
+					// to be merged
+
+	// Merge subarrays in bottom up manner.  First merge subarrays of
+	// size 1 to create sorted subarrays of size 2, then merge subarrays
+	// of size 2 to create sorted subarrays of size 4, and so on.
+	for (curr_size = 1; curr_size <= n - 1; curr_size = 2 * curr_size)
+	{
+		// Pick starting point of different subarrays of current size
+		for (left_start = 0; left_start < n - 1; left_start += 2 * curr_size)
+		{
+			// Find ending point of left subarray. mid+1 is starting
+			// point of right
+			int mid = mini(left_start + curr_size - 1, n - 1);
+
+			int right_end = mini(left_start + 2 * curr_size - 1, n - 1);
+
+			// Merge Subarrays arr[left_start...mid] & arr[mid+1...right_end]
+			merge(arr, left_start, mid, right_end);
+		}
+	}
+}
+
+void mergeSort(int arr[], int l, int r)
+{
+	if (l < r)
+	{
+		// Same as (l+r)/2, but avoids overflow for
+		// large l and h
+		int m = l + (r - l) / 2;
+
+		// Sort first and second halves
+		mergeSort(arr, l, m);
+		mergeSort(arr, m + 1, r);
+
+		merge(arr, l, m, r);
+	}
+}
+
+void swap(int* a, int* b)
+{
+	int t = *a;
+	*a = *b;
+	*b = t;
+}
+
+// This function is same in both iterative and recursive
+int partition(int arr[], int l, int h)
+{
+	int x = arr[h];
+	int i = (l - 1);
+
+	for (int j = l; j <= h - 1; j++)
+	{
+		if (arr[j] <= x)
+		{
+			i++;
+			swap(&arr[i], &arr[j]);
+		}
+	}
+	swap(&arr[i + 1], &arr[h]);
+	return (i + 1);
+}
+
+void iquickSort(int arr[], int l, int h)
+{
+	// Create an auxiliary stack
+	int* stack = (int*)malloc((h - l + 1) * sizeof(int));
+
+	// initialize top of stack
+	int top = -1;
+
+	// push initial values of l and h to stack
+	stack[++top] = l;
+	stack[++top] = h;
+
+	// Keep popping from stack while is not empty
+	while (top >= 0)
+	{
+		// Pop h and l
+		h = stack[top--];
+		l = stack[top--];
+
+		// Set pivot element at its correct position
+		// in sorted array
+		int p = partition(arr, l, h);
+
+		// If there are elements on left side of pivot,
+		// then push left side to stack
+		if (p - 1 > l) {
+			stack[++top] = l;
+			stack[++top] = p - 1;
+		}
+
+		// If there are elements on right side of pivot,
+		// then push right side to stack
+		if (p + 1 < h) {
+			stack[++top] = p + 1;
+			stack[++top] = h;
+		}
+	}
+}
+
+void quickSort(int A[], int l, int h)
+{
+	if (l < h)
+	{
+		int p = partition(A, l, h);
+		quickSort(A, l, p - 1);
+		quickSort(A, p + 1, h);
+	}
+}
+
+void buildMaxHeap(int arr[], int n)
+{
+	for (int i = 1; i < n; i++)
+	{
+		// if child is bigger than parent
+		if (arr[i] > arr[(i - 1) / 2])
+		{
+			int j = i;
+
+			// swap child and parent until
+			// parent is smaller
+			while (arr[j] > arr[(j - 1) / 2])
+			{
+				swap(&arr[j], &arr[(j - 1) / 2]);
+				j = (j - 1) / 2;
+			}
+		}
+	}
+}
+
+void iheapSort(int arr[], int n)
+{
+	buildMaxHeap(arr, n);
+
+	for (int i = n - 1; i > 0; i--)
+	{
+		// swap value of first indexed 
+		// with last indexed 
+		swap(&arr[0], &arr[i]);
+
+		// maintaining heap property
+		// after each swapping
+		int j = 0, index;
+
+		do
+		{
+			index = (2 * j + 1);
+
+			// if left child is smaller than 
+			// right child point index variable 
+			// to right child
+			if (arr[index] < arr[index + 1] &&
+				index < (i - 1))
+				index++;
+
+			// if parent is smaller than child 
+			// then swapping parent with child 
+			// having higher value
+			if (arr[j] < arr[index] && index < i)
+				swap(&arr[j], &arr[index]);
+
+			j = index;
+
+		} while (index < i);
+	}
+}
+
+void heapify(int arr[], int n, int i)
+{
+	int largest = i; // Initialize largest as root
+	int l = 2 * i + 1; // left = 2*i + 1
+	int r = 2 * i + 2; // right = 2*i + 2
+
+	// If left child is larger than root
+	if (l < n && arr[l] > arr[largest])
+		largest = l;
+
+	// If right child is larger than largest so far
+	if (r < n && arr[r] > arr[largest])
+		largest = r;
+
+	// If largest is not root
+	if (largest != i) {
+		swap(&arr[i], &arr[largest]);
+
+		// Recursively heapify the affected sub-tree
+		heapify(arr, n, largest);
+	}
+}
+
+// main function to do heap sort
+void heapSort(int arr[], int n)
+{
+	// Build heap (rearrange array)
+	for (int i = n / 2 - 1; i >= 0; i--)
+		heapify(arr, n, i);
+
+	// One by one extract an element from heap
+	for (int i = n - 1; i > 0; i--) {
+		// Move current root to end
+		swap(&arr[0], &arr[i]);
+
+		// call max heapify on the reduced heap
+		heapify(arr, i, 0);
+	}
+}
+
+// Function that performs Radix Sort
+void radixSort(int arr[], int n)
+{
+
+	// Step 1: Find the maxumum element
+	int maximum = arr[0];
+
+	for (int i = 1; i < n; i++)
+	{
+		if (maximum < arr[i])
+			maximum = arr[i];
+	}
+
+	// Step 2: Count the number of digits of the maximum number
+	int digits = 0;
+
+	while (maximum > 0)
+	{
+		digits++;
+		maximum /= 10;
+	}
+
+	// Units/Tens/Hundreds - used to determine which digit
+	int power = 1;
+
+	// Step 3, 4, 5: Arrange the numbers on the basis of digits
+	for (int i = 0; i < digits; i++)
+	{
+
+		// Holds the updated array 
+		int* new_array = (int*)malloc(n * sizeof(int));
+
+		// Counting Sort Array - required for arranging digits [0-9]
+		int count[10];
+
+		// Initializing Count Array
+		for (int j = 0; j < 10; j++)
+			count[j] = 0;
+
+		// Calculating frequency of digits
+		for (int j = 0; j < n; j++)
+		{
+
+			// The digit under consideration in this iteration
+			int num = (arr[j] / power) % 10;
+
+			count[num]++;
+		}
+
+		// Cumulative frequency of count array
+		for (int j = 1; j < 10; j++)
+		{
+			count[j] += count[j - 1];
+		}
+
+		// Designating new positions in the updated array
+		for (int j = n - 1; j >= 0; j--)
+		{
+
+			// The digit under consideration in this iteration
+			int num = (arr[j] / power) % 10;
+
+			new_array[count[num] - 1] = arr[j];
+			count[num]--;
+		}
+
+		// Updating the original array using New Array
+		for (int j = 0; j < n; j++)
+			arr[j] = new_array[j];
+
+		// Updating the digit to be considered next iteration
+		power *= 10;
+	}
 }
 
 int main()
 {
-    printf("Enter b for Bubble Sort\n");
-    printf("Enter s for Selection Sort\n");
-    printf("Enter i for Insertion Sort\n");
-    printf("Enter a for Bubble Sort using recursion\n");
-    printf("Enter f for Selection Sort using recursion\n");
-    printf("Enter j for Insertion Sort using recursion\n");
+	printf("Enter b for Bubble Sort\n");
+	printf("Enter s for Selection Sort\n");
+	printf("Enter i for Insertion Sort\n");
+	printf("Enter m for Merge Sort\n");
+	printf("Enter q for Quick Sort\n");
+	printf("Enter h for Heap Sort\n");
+	printf("Enter r for Radix Sort\n");
+	printf("Enter a for Bubble Sort using recursion\n");
+	printf("Enter f for Selection Sort using recursion\n");
+	printf("Enter j for Insertion Sort using recursion\n");
+	printf("Enter g for Merge Sort using recursion\n");
+	printf("Enter l for Quick Sort using recursion\n");
+	printf("Enter v for Heap Sort using recursion\n");
 
-    char ch;
-    scanf_s("%c", &ch);
+	char ch;
+	scanf("%c", &ch);
 
-    switch (ch)
-    {
-    case 'b' :
-    {
-        printf("Enter the size of your array\n");
-        int n;
-        scanf_s("%d", &n);
-        int* a = (int*)malloc(n * sizeof(int));
+	switch (ch)
+	{
+	case 'b':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
 
-        printf("Enter the elements of the array seperated by the space\n");
-        for (int i = 0; i < n; i++)
-            scanf_s("%d", &a[i]);
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
 
-        //bubble sorting
-        int flag = 0;
-        for (int i = 0; i < n - 1; i++)
-        {
-            for (int j = 0; j < n - i - 1; j++)
-            {
-                if (a[j] > a[j + 1])
-                {
-                    int temp = a[j];
-                    a[j] = a[j + 1];
-                    a[j + 1] = temp;
-                    flag++;
-                }
-            }
-            if (flag == 0)
-                break;
-            flag = 0;
-        }
+		//bubble sorting
+		int flag = 0;
+		for (int i = 0; i < n - 1; i++)
+		{
+			for (int j = 0; j < n - i - 1; j++)
+			{
+				if (a[j] > a[j + 1])
+				{
+					int temp = a[j];
+					a[j] = a[j + 1];
+					a[j + 1] = temp;
+					flag++;
+				}
+			}
+			if (flag == 0)
+				break;
+			flag = 0;
+		}
 
-        printf("Here's your sorted array\n");
+		printf("Here's your sorted array\n");
 
-        for (int i = 0; i < n; i++)
-            printf("%d ", a[i]);
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
 
-        break;
-    }
-    case 's' :
-    {
-        printf("Enter the size of your array\n");
-        int n;
-        scanf_s("%d", &n);
-        int* a = (int*)malloc(n * sizeof(int));
+		break;
+	}
+	case 's':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
 
-        printf("Enter the elements of the array seperated by the space\n");
-        for (int i = 0; i < n; i++)
-            scanf_s("%d", &a[i]);
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
 
-        //selection sorting
-        int i, j, min_idx;
-        for (i = 0; i < n - 1; i++)
-        {
-            min_idx = i;
-            for (j = i + 1; j < n; j++)
-                if (a[j] < a[min_idx])
-                    min_idx = j;
+		//selection sorting
+		int i, j, min_idx;
+		for (i = 0; i < n - 1; i++)
+		{
+			min_idx = i;
+			for (j = i + 1; j < n; j++)
+				if (a[j] < a[min_idx])
+					min_idx = j;
 
-            int temp = a[i];
-            a[i] = a[min_idx];
-            a[min_idx] = temp;
-        }
+			int temp = a[i];
+			a[i] = a[min_idx];
+			a[min_idx] = temp;
+		}
 
-        printf("Here's your sorted array\n");
+		printf("Here's your sorted array\n");
 
-        for (int i = 0; i < n; i++)
-            printf("%d ", a[i]);
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
 
-        break;
-    }
-    case 'i' :
-    {
-        printf("Enter the size of your array\n");
-        int n;
-        scanf_s("%d", &n);
-        int* a = (int*)malloc(n * sizeof(int));
+		break;
+	}
+	case 'i':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
 
-        printf("Enter the elements of the array seperated by the space\n");
-        for (int i = 0; i < n; i++)
-            scanf_s("%d", &a[i]);
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
 
-        //insertion sorting
-        for (int i = 1; i < n; i++)
-        {
-            int key = a[i];
-            int j = i - 1;
-            while (j >= 0 && a[j] > key)
-            {
-                a[j + 1] = a[j];
-                j--;
-            }
-            a[j + 1] = key;
-        }
+		//insertion sorting
+		for (int i = 1; i < n; i++)
+		{
+			int key = a[i];
+			int j = i - 1;
+			while (j >= 0 && a[j] > key)
+			{
+				a[j + 1] = a[j];
+				j--;
+			}
+			a[j + 1] = key;
+		}
 
-        printf("Here's your sorted array\n");
+		printf("Here's your sorted array\n");
 
-        for (int i = 0; i < n; i++)
-            printf("%d ", a[i]);
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
 
-        break;
-    }
-    case 'a' :
-    {
-        printf("Enter the size of your array\n");
-        int n;
-        scanf_s("%d", &n);
-        int* a = (int*)malloc(n * sizeof(int));
+		break;
+	}
+	case 'm':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
 
-        printf("Enter the elements of the array seperated by the space\n");
-        for (int i = 0; i < n; i++)
-            scanf_s("%d", &a[i]);
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
 
-        bubsrt(a, n);
+		imergeSort(a, n);
 
-        printf("Here's your sorted array\n");
+		printf("Here's your sorted array\n");
 
-        for (int i = 0; i < n; i++)
-            printf("%d ", a[i]);
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
 
-        break;
-    }
-    case 'f' :
-    {
-        printf("Enter the size of your array\n");
-        int n;
-        scanf_s("%d", &n);
-        int* a = (int*)malloc(n * sizeof(int));
+		break;
+	}
+	case 'q':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
 
-        printf("Enter the elements of the array seperated by the space\n");
-        for (int i = 0; i < n; i++)
-            scanf_s("%d", &a[i]);
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
 
-        selsrt(a, 0, n);
+		iquickSort(a, 0, n - 1);
 
-        printf("Here's your sorted array\n");
+		printf("Here's your sorted array\n");
 
-        for (int i = 0; i < n; i++)
-            printf("%d ", a[i]);
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
 
-        break;
-    }
-    case 'j' :
-    {
-        printf("Enter the size of your array\n");
-        int n;
-        scanf_s("%d", &n);
-        int* a = (int*)malloc(n * sizeof(int));
+		break;
+	}
+	case 'h':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
 
-        printf("Enter the elements of the array seperated by the space\n");
-        for (int i = 0; i < n; i++)
-            scanf_s("%d", &a[i]);
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
 
-        inssrt(a, n);
+		iheapSort(a, n);
 
-        printf("Here's your sorted array\n");
+		printf("Here's your sorted array\n");
 
-        for (int i = 0; i < n; i++)
-            printf("%d ", a[i]);
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
 
-        break;
-    }
-    default :
-    {
-        printf("Wrong Input! Please Try again\n");
-    }
-    }
+		break;
+	}
+	case 'r':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
 
-    return 0;
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
+
+		radixSort(a, n);
+
+		printf("Here's your sorted array\n");
+
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
+
+		break;
+	}
+	case 'a':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
+
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
+
+		bubsrt(a, n);
+
+		printf("Here's your sorted array\n");
+
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
+
+		break;
+	}
+	case 'f':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
+
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
+
+		selsrt(a, 0, n);
+
+		printf("Here's your sorted array\n");
+
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
+
+		break;
+	}
+	case 'j':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
+
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
+
+		inssrt(a, n);
+
+		printf("Here's your sorted array\n");
+
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
+
+		break;
+	}
+	case 'g':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
+
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
+
+		mergeSort(a, 0, n - 1);
+
+		printf("Here's your sorted array\n");
+
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
+
+		break;
+	}
+	case 'l':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
+
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
+
+		quickSort(a, 0, n - 1);
+
+		printf("Here's your sorted array\n");
+
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
+
+		break;
+	}
+	case 'v':
+	{
+		printf("Enter the size of your array\n");
+		int n;
+		scanf("%d", &n);
+		int* a = (int*)malloc(n * sizeof(int));
+
+		printf("Enter the elements of the array seperated by the space\n");
+		for (int i = 0; i < n; i++)
+			scanf("%d", &a[i]);
+
+		heapSort(a, n);
+
+		printf("Here's your sorted array\n");
+
+		for (int i = 0; i < n; i++)
+			printf("%d ", a[i]);
+
+		break;
+	}
+	default:
+	{
+		printf("Wrong Input! Please Try again\n");
+	}
+	}
+
+	return 0;
 }
